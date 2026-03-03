@@ -31,7 +31,14 @@
       at least 30%
     
       (from my previous simple e-journal project)
-      link: writeyourvoice.netlify.app  
+
+      
+Check out [WriteYourVoice](https://writeyourvoice.netlify.app/) for reference.
+
+
+
+      
+  
 <br>
     
 ## Keyboard function for more efficient workflow
@@ -63,7 +70,6 @@
 ### UI/UX Improvements
 
     [WIP]
-
 
 
 
