@@ -62,6 +62,14 @@ Check out [WriteYourVoice](https://writeyourvoice.netlify.app/) for reference.
 
 - PDF Auto Filtering status; Serviceable, Unserviceable, For Update (Masterlist)
 
+### Add To Google Sheet Feature
+
+    - New Button in Dashboard: Export CSV will remain, but a new button option named "Add To Google Sheets" will be added. 
+
+### What it does:
+
+   - Automatically creates new online spreadsheets in Google when the 'Add to Google Sheets' button is triggered.
+
 
 ### Use Docker for DB Manager
     [WIP]
