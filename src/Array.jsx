@@ -2306,9 +2306,19 @@ function Array() {
       {fullPageViewMode && (
         <div className="fullpage-overlay">
           <div className="fullpage-modal">
-            <div className="fullpage-header">
+            {/* Header with Title and Close Button */}
+            <div className="fullpage-title-bar">
               <h2>Full Page View - Entries ({currentPage} of {getTotalPages()})</h2>
-              
+              <button 
+                onClick={() => { setFullPageViewMode(false); setCurrentPage(1); }}
+                className="fullpage-close-btn"
+                title="Close full page view"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="fullpage-header">
               {/* Search Bar */}
               <div className="search-container fullpage-search-container">
                 <svg className="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -2389,94 +2399,71 @@ function Array() {
                 )}
               </div>
 
-              {/* Status Filter Buttons */}
-              <div className="status-filter-buttons fullpage-status-filters">
-                <button 
-                  className={`filter-btn ${statusFilter === "all" ? "active" : ""}`}
-                  onClick={() => { setStatusFilter("all"); setCurrentPage(1); }}
-                >
-                  All ({entries.length})
-                </button>
-                <button 
-                  className={`filter-btn serviceable ${statusFilter === "Serviceable (SVC)" ? "active" : ""}`}
-                  onClick={() => { setStatusFilter("Serviceable (SVC)"); setCurrentPage(1); }}
-                >
-                  SVC ({entries.filter(e => e.conditionStatus === "Serviceable (SVC)").length})
-                </button>
-                <button 
-                  className={`filter-btn unserviceable ${statusFilter === "Unserviceable (UNSVC)" ? "active" : ""}`}
-                  onClick={() => { setStatusFilter("Unserviceable (UNSVC)"); setCurrentPage(1); }}
-                >
-                  UNSVC ({entries.filter(e => e.conditionStatus === "Unserviceable (UNSVC)").length})
-                </button>
-                <button 
-                  className={`filter-btn ${statusFilter === "Update (Masterlist)" ? "active" : ""}`}
-                  onClick={() => { setStatusFilter("Update (Masterlist)"); setCurrentPage(1); }}
-                >
-                  Update ({entries.filter(e => e.conditionStatus === "Update (Masterlist)").length})
-                </button>
-              </div>
+              {/* Status Filters and Date Filter Row */}
+              <div className="fullpage-filters-row">
+                {/* Status Filter Buttons */}
+                <div className="status-filter-buttons fullpage-status-filters">
+                  <button 
+                    className={`filter-btn ${statusFilter === "all" ? "active" : ""}`}
+                    onClick={() => { setStatusFilter("all"); setCurrentPage(1); }}
+                  >
+                    All ({entries.length})
+                  </button>
+                  <button 
+                    className={`filter-btn serviceable ${statusFilter === "Serviceable (SVC)" ? "active" : ""}`}
+                    onClick={() => { setStatusFilter("Serviceable (SVC)"); setCurrentPage(1); }}
+                  >
+                    SVC ({entries.filter(e => e.conditionStatus === "Serviceable (SVC)").length})
+                  </button>
+                  <button 
+                    className={`filter-btn unserviceable ${statusFilter === "Unserviceable (UNSVC)" ? "active" : ""}`}
+                    onClick={() => { setStatusFilter("Unserviceable (UNSVC)"); setCurrentPage(1); }}
+                  >
+                    UNSVC ({entries.filter(e => e.conditionStatus === "Unserviceable (UNSVC)").length})
+                  </button>
+                  <button 
+                    className={`filter-btn ${statusFilter === "Update (Masterlist)" ? "active" : ""}`}
+                    onClick={() => { setStatusFilter("Update (Masterlist)"); setCurrentPage(1); }}
+                  >
+                    Update ({entries.filter(e => e.conditionStatus === "Update (Masterlist)").length})
+                  </button>
+                </div>
 
-              {/* Date Filter */}
-              <div className="date-filter-container fullpage-date-filter">
-                <label htmlFor="dateFilterFullpage" className="date-filter-label">Created Date:</label>
-                <input
-                  type="date"
-                  id="dateFilterFullpage"
-                  className="date-filter-input"
-                  value={dateFilter}
-                  onChange={(e) => {
-                    const selectedDate = e.target.value;
-                    if (selectedDate) {
-                      const [year, month, day] = selectedDate.split('-');
-                      const formattedDate = `${parseInt(month)}/${parseInt(day)}/${year}`;
-                      setDateFilter(formattedDate);
-                    } else {
-                      setDateFilter("");
-                    }
-                    setCurrentPage(1);
-                  }}
-                />
-                {dateFilter && (
-                  <>
-                    <span className="date-filter-display">
-                      📅 Active: <strong>{dateFilter}</strong>
-                    </span>
-                    <button
-                      className="clear-date-btn"
-                      onClick={() => { setDateFilter(""); setCurrentPage(1); }}
-                      title="Clear date filter"
-                    >
-                      ✕
-                    </button>
-                  </>
-                )}
-              </div>
-
-              {/* Pagination Controls */}
-              <div className="fullpage-controls">
-                <button 
-                  onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                  disabled={currentPage === 1}
-                  className="nav-btn"
-                >
-                  ← Previous
-                </button>
-                <span className="page-indicator">Page {currentPage} of {getTotalPages()} | {getFilteredEntries().length} total</span>
-                <button 
-                  onClick={() => setCurrentPage(Math.min(getTotalPages(), currentPage + 1))}
-                  disabled={currentPage === getTotalPages()}
-                  className="nav-btn"
-                >
-                  Next →
-                </button>
-                <button 
-                  onClick={() => { setFullPageViewMode(false); setCurrentPage(1); }}
-                  className="close-fullpage-btn"
-                  title="Close full page view"
-                >
-                  ✕
-                </button>
+                {/* Date Filter */}
+                <div className="date-filter-container fullpage-date-filter-inline">
+                  <label htmlFor="dateFilterFullpage" className="date-filter-label">Created Date:</label>
+                  <input
+                    type="date"
+                    id="dateFilterFullpage"
+                    className="date-filter-input"
+                    value={dateFilter}
+                    onChange={(e) => {
+                      const selectedDate = e.target.value;
+                      if (selectedDate) {
+                        const [year, month, day] = selectedDate.split('-');
+                        const formattedDate = `${parseInt(month)}/${parseInt(day)}/${year}`;
+                        setDateFilter(formattedDate);
+                      } else {
+                        setDateFilter("");
+                      }
+                      setCurrentPage(1);
+                    }}
+                  />
+                  {dateFilter && (
+                    <>
+                      <span className="date-filter-display">
+                        📅 Active: <strong>{dateFilter}</strong>
+                      </span>
+                      <button
+                        className="clear-date-btn"
+                        onClick={() => { setDateFilter(""); setCurrentPage(1); }}
+                        title="Clear date filter"
+                      >
+                        ✕
+                      </button>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -2524,6 +2511,25 @@ function Array() {
                   </table>
                 </div>
               )}
+            </div>
+
+            {/* Pagination Controls at Bottom */}
+            <div className="fullpage-footer">
+              <button 
+                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                disabled={currentPage === 1}
+                className="nav-btn"
+              >
+                ← Previous
+              </button>
+              <span className="page-indicator">Page {currentPage} of {getTotalPages()} | {getFilteredEntries().length} total</span>
+              <button 
+                onClick={() => setCurrentPage(Math.min(getTotalPages(), currentPage + 1))}
+                disabled={currentPage === getTotalPages()}
+                className="nav-btn"
+              >
+                Next →
+              </button>
             </div>
           </div>
         </div>
