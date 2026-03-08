@@ -86,14 +86,27 @@ function Array() {
 
   // Load entries from Firestore in real-time
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, "entries"), (snapshot) => {
-      const loaded = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      setEntries(loaded);
-    });
-    return () => unsubscribe();
+    try {
+      const unsubscribe = onSnapshot(
+        collection(db, "entries"),
+        (snapshot) => {
+          const loaded = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          }));
+          setEntries(loaded);
+        },
+        (error) => {
+          console.error("Firebase Firestore error:", error);
+          // Don't crash - just show empty entries
+          setEntries([]);
+        }
+      );
+      return () => unsubscribe();
+    } catch (error) {
+      console.error("Firebase initialization error:", error);
+      setEntries([]);
+    }
   }, []);
 
   function showNotification(message, type = "info") {
