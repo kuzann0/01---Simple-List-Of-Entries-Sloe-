@@ -66,7 +66,7 @@ function Array() {
   const [notificationExiting, setNotificationExiting] = useState(false);
   const [fullPageViewMode, setFullPageViewMode] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [entriesPerPage] = useState(15);
+  const [entriesPerPage] = useState(10);
   const [pagesPerDocument, setPagesPerDocument] = useState(1);
   const [mainViewPage, setMainViewPage] = useState(1);
   const [mainEntriesPerPage] = useState(10);
@@ -2308,8 +2308,179 @@ function Array() {
           <div className="fullpage-modal">
             <div className="fullpage-header">
               <h2>Full Page View - Entries ({currentPage} of {getTotalPages()})</h2>
-              {/* ...existing search/filter controls... */}
+              
+              {/* Search Bar */}
+              <div className="search-container fullpage-search-container">
+                <svg className="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <path d="m21 21-4.35-4.35"></path>
+                </svg>
+                <input
+                  type="text"
+                  className="search-bar"
+                  placeholder="Search entries..."
+                  value={searchTerm}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    setShowDropdown(true);
+                    setSelectedSearchIndex(-1);
+                    setCurrentPage(1);
+                  }}
+                  onKeyDown={handleSearchKeyDown}
+                  onFocus={() => searchTerm && setShowDropdown(true)}
+                  onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
+                />
+                <div className="category-filter">
+                  <button
+                    className={`category-button ${showCategoryMenu ? 'open' : ''}`}
+                    onClick={() => setShowCategoryMenu(!showCategoryMenu)}
+                    onKeyDown={handleCategoryKeyDown}
+                    onBlur={() => setTimeout(() => setShowCategoryMenu(false), 200)}
+                  >
+                    <span className="category-label">
+                      {searchCategory === "all" ? "All" :
+                       searchCategory === "entryNumber" ? "Entry No." :
+                       searchCategory === "modelName" ? "Model Name" :
+                       searchCategory === "serialNumber" ? "Serial No." :
+                       searchCategory === "propertyNumber" ? "Property No." :
+                       searchCategory === "conditionStatus" ? "Status" :
+                       "Remarks"}
+                    </span>
+                    <svg className="category-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </button>
+                  {showCategoryMenu && (
+                    <div className="category-menu">
+                      <div className={`category-option ${selectedCategoryIndex === 0 ? "selected" : ""}`} onClick={() => { setSearchCategory("all"); setShowCategoryMenu(false); }} onMouseEnter={() => setSelectedCategoryIndex(0)}>All Fields</div>
+                      <div className={`category-option ${selectedCategoryIndex === 1 ? "selected" : ""}`} onClick={() => { setSearchCategory("entryNumber"); setShowCategoryMenu(false); }} onMouseEnter={() => setSelectedCategoryIndex(1)}>Entry No.</div>
+                      <div className={`category-option ${selectedCategoryIndex === 2 ? "selected" : ""}`} onClick={() => { setSearchCategory("modelName"); setShowCategoryMenu(false); }} onMouseEnter={() => setSelectedCategoryIndex(2)}>Model Name</div>
+                      <div className={`category-option ${selectedCategoryIndex === 3 ? "selected" : ""}`} onClick={() => { setSearchCategory("serialNumber"); setShowCategoryMenu(false); }} onMouseEnter={() => setSelectedCategoryIndex(3)}>Serial No.</div>
+                      <div className={`category-option ${selectedCategoryIndex === 4 ? "selected" : ""}`} onClick={() => { setSearchCategory("propertyNumber"); setShowCategoryMenu(false); }} onMouseEnter={() => setSelectedCategoryIndex(4)}>Property No.</div>
+                      <div className={`category-option ${selectedCategoryIndex === 5 ? "selected" : ""}`} onClick={() => { setSearchCategory("conditionStatus"); setShowCategoryMenu(false); }} onMouseEnter={() => setSelectedCategoryIndex(5)}>Service Status</div>
+                      <div className={`category-option ${selectedCategoryIndex === 6 ? "selected" : ""}`} onClick={() => { setSearchCategory("remarks"); setShowCategoryMenu(false); }} onMouseEnter={() => setSelectedCategoryIndex(6)}>Remarks</div>
+                    </div>
+                  )}
+                </div>
+
+                {showDropdown && searchTerm && getFilteredEntries().length > 0 && (
+                  <div className="search-dropdown">
+                    {getFilteredEntries().map((entry, idx) => (
+                      <div
+                        key={idx}
+                        className={`search-result-item ${idx === selectedSearchIndex ? "selected" : ""}`}
+                        onClick={() => handleSearchResultClick(entry)}
+                        onMouseEnter={() => setSelectedSearchIndex(idx)}
+                      >
+                        {searchCategory === "modelName" ? (
+                          <>
+                            <strong>{entry.modelName}</strong>
+                            <span className="search-result-meta">{entry.serialNumber}</span>
+                          </>
+                        ) : (
+                          <>
+                            <strong>{entry.entryNumber}</strong>
+                            <span className="search-result-meta">{entry.serialNumber}</span>
+                          </>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Status Filter Buttons */}
+              <div className="status-filter-buttons fullpage-status-filters">
+                <button 
+                  className={`filter-btn ${statusFilter === "all" ? "active" : ""}`}
+                  onClick={() => { setStatusFilter("all"); setCurrentPage(1); }}
+                >
+                  All ({entries.length})
+                </button>
+                <button 
+                  className={`filter-btn serviceable ${statusFilter === "Serviceable (SVC)" ? "active" : ""}`}
+                  onClick={() => { setStatusFilter("Serviceable (SVC)"); setCurrentPage(1); }}
+                >
+                  SVC ({entries.filter(e => e.conditionStatus === "Serviceable (SVC)").length})
+                </button>
+                <button 
+                  className={`filter-btn unserviceable ${statusFilter === "Unserviceable (UNSVC)" ? "active" : ""}`}
+                  onClick={() => { setStatusFilter("Unserviceable (UNSVC)"); setCurrentPage(1); }}
+                >
+                  UNSVC ({entries.filter(e => e.conditionStatus === "Unserviceable (UNSVC)").length})
+                </button>
+                <button 
+                  className={`filter-btn ${statusFilter === "Update (Masterlist)" ? "active" : ""}`}
+                  onClick={() => { setStatusFilter("Update (Masterlist)"); setCurrentPage(1); }}
+                >
+                  Update ({entries.filter(e => e.conditionStatus === "Update (Masterlist)").length})
+                </button>
+              </div>
+
+              {/* Date Filter */}
+              <div className="date-filter-container fullpage-date-filter">
+                <label htmlFor="dateFilterFullpage" className="date-filter-label">Created Date:</label>
+                <input
+                  type="date"
+                  id="dateFilterFullpage"
+                  className="date-filter-input"
+                  value={dateFilter}
+                  onChange={(e) => {
+                    const selectedDate = e.target.value;
+                    if (selectedDate) {
+                      const [year, month, day] = selectedDate.split('-');
+                      const formattedDate = `${parseInt(month)}/${parseInt(day)}/${year}`;
+                      setDateFilter(formattedDate);
+                    } else {
+                      setDateFilter("");
+                    }
+                    setCurrentPage(1);
+                  }}
+                />
+                {dateFilter && (
+                  <>
+                    <span className="date-filter-display">
+                      📅 Active: <strong>{dateFilter}</strong>
+                    </span>
+                    <button
+                      className="clear-date-btn"
+                      onClick={() => { setDateFilter(""); setCurrentPage(1); }}
+                      title="Clear date filter"
+                    >
+                      ✕
+                    </button>
+                  </>
+                )}
+              </div>
+
+              {/* Pagination Controls */}
+              <div className="fullpage-controls">
+                <button 
+                  onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                  disabled={currentPage === 1}
+                  className="nav-btn"
+                >
+                  ← Previous
+                </button>
+                <span className="page-indicator">Page {currentPage} of {getTotalPages()} | {getFilteredEntries().length} total</span>
+                <button 
+                  onClick={() => setCurrentPage(Math.min(getTotalPages(), currentPage + 1))}
+                  disabled={currentPage === getTotalPages()}
+                  className="nav-btn"
+                >
+                  Next →
+                </button>
+                <button 
+                  onClick={() => { setFullPageViewMode(false); setCurrentPage(1); }}
+                  className="close-fullpage-btn"
+                  title="Close full page view"
+                >
+                  ✕
+                </button>
+              </div>
             </div>
+
+            {/* Table Content */}
             <div className="fullpage-content">
               {getPaginatedEntries().length === 0 ? (
                 <div className="empty-state">No entries to display</div>
@@ -2334,15 +2505,15 @@ function Array() {
                         const originalIndex = entries.indexOf(entry);
                         return (
                           <tr key={originalIndex} className={`fullpage-entry-row ${entry.conditionStatus === "Serviceable (SVC)" ? "status-serviceable" : entry.conditionStatus === "Unserviceable (UNSVC)" ? "status-unserviceable" : "status-update"}`}>
-                            <td>{entry.entryNumber}</td>
-                            <td>{entry.modelName}</td>
-                            <td>{entry.serialNumber}</td>
-                            <td>{entry.propertyNumber}</td>
-                            <td><span className={`status-badge ${entry.conditionStatus === "Serviceable (SVC)" ? "serviceable" : entry.conditionStatus === "Unserviceable (UNSVC)" ? "unserviceable" : "update"}`}>{entry.conditionStatus}</span></td>
-                            <td>{entry.remarks}</td>
-                            <td>{entry.createdAt || "N/A"}</td>
-                            <td>{entry.updatedAt || "N/A"}</td>
-                            <td>
+                            <td className="entry-number">{entry.entryNumber}</td>
+                            <td className="model-name">{entry.modelName}</td>
+                            <td className="serial-number">{entry.serialNumber}</td>
+                            <td className="property-number">{entry.propertyNumber}</td>
+                            <td className="status-cell"><span className={`status-badge ${entry.conditionStatus === "Serviceable (SVC)" ? "serviceable" : entry.conditionStatus === "Unserviceable (UNSVC)" ? "unserviceable" : "update"}`}>{entry.conditionStatus}</span></td>
+                            <td className="remarks-cell">{entry.remarks}</td>
+                            <td className="date-cell">{entry.createdAt || "N/A"}</td>
+                            <td className="date-cell">{entry.updatedAt || "N/A"}</td>
+                            <td className="actions-cell">
                               <button onClick={() => handleEditEntry(originalIndex)} className="edit-btn">Edit</button>
                               <button onClick={() => handleRemoveEntry(originalIndex)} className="remove-btn">Remove</button>
                             </td>
