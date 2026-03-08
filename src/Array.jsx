@@ -1604,7 +1604,7 @@ function Array() {
         {dateFilter && (
           <>
             <span className="date-filter-display">
-              📅 Active: <strong>{dateFilter}</strong>
+               Active: <strong>{dateFilter}</strong>
             </span>
             <button
             className="clear-date-btn"
