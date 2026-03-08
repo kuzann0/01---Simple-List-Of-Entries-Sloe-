@@ -1479,7 +1479,7 @@ function Array() {
         />
         <div className="category-filter">
           <button
-            className="category-button"
+            className={`category-button ${showCategoryMenu ? 'open' : ''}`}
             onClick={() => setShowCategoryMenu(!showCategoryMenu)}
             onKeyDown={handleCategoryKeyDown}
             onBlur={() => setTimeout(() => setShowCategoryMenu(false), 200)}
@@ -2216,7 +2216,7 @@ function Array() {
                 />
                 <div className="category-filter">
                   <button
-                    className="category-button"
+                    className={`category-button ${showCategoryMenu ? 'open' : ''}`}
                     onClick={() => setShowCategoryMenu(!showCategoryMenu)}
                     onKeyDown={handleCategoryKeyDown}
                     onBlur={() => setTimeout(() => setShowCategoryMenu(false), 200)}
