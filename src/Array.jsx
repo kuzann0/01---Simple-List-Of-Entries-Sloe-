@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { jsPDF } from 'jspdf';
+import { db } from './firebase';
+import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc, query, onSnapshot } from 'firebase/firestore';
 
 
 
 function Array() {
-  const [entries, setEntries] = useState(() => {
-    const savedEntries = localStorage.getItem("entriesList");
-    return savedEntries ? JSON.parse(savedEntries) : [];
-  });
+  const [entries, setEntries] = useState([]);
 
   const [editingIndex, setEditingIndex] = useState(null);
   const [editData, setEditData] = useState({
@@ -85,6 +84,18 @@ function Array() {
   });
   const [showGoogleSetup, setShowGoogleSetup] = useState(false);
 
+  // Load entries from Firestore in real-time
+  useEffect(() => {
+    const unsubscribe = onSnapshot(collection(db, "entries"), (snapshot) => {
+      const loaded = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setEntries(loaded);
+    });
+    return () => unsubscribe();
+  }, []);
+
   function showNotification(message, type = "info") {
     setNotificationExiting(false);
     setNotification({ show: true, message, type });
@@ -98,7 +109,7 @@ function Array() {
   }
 
   useEffect(() => {
-    localStorage.setItem("entriesList", JSON.stringify(entries));
+    // Entries are synced with Firestore automatically via onSnapshot listener
   }, [entries]);
 
   useEffect(() => {
@@ -532,8 +543,21 @@ function Array() {
     setAddEntryNumberEditable(false);
     setShowAddEntryModal(false);
 
-    setEntries(f => [...f, newEntry]);
-    showNotification(`Entry #${newEntry.entryNumber} added successfully!`, "success");
+    // Save to Firestore instead of local state
+    addDoc(collection(db, "entries"), {
+      entryNumber: newEntry.entryNumber,
+      modelName: newEntry.modelName,
+      serialNumber: newEntry.serialNumber,
+      propertyNumber: newEntry.propertyNumber,
+      conditionStatus: newEntry.conditionStatus,
+      remarks: newEntry.remarks,
+      createdAt: newEntry.createdAt,
+      updatedAt: newEntry.updatedAt
+    }).then(() => {
+      showNotification(`Entry #${newEntry.entryNumber} added successfully!`, "success");
+    }).catch(err => {
+      showNotification(`Error adding entry: ${err.message}`, "error");
+    });
   }
   function handleRemoveEntry(index) {
     setDeleteConfirm({ show: true, index });
@@ -542,9 +566,14 @@ function Array() {
   function confirmDelete() {
     if (deleteConfirm.index !== null) {
       const deletedEntry = entries[deleteConfirm.index];
-      setEntries(entries.filter((_, i) => i !== deleteConfirm.index));
-      setDeleteConfirm({ show: false, index: null });
-      showNotification(`Entry #${deletedEntry.entryNumber} deleted successfully!`, "success");
+      
+      // Delete from Firestore
+      deleteDoc(doc(db, "entries", deletedEntry.id)).then(() => {
+        setDeleteConfirm({ show: false, index: null });
+        showNotification(`Entry #${deletedEntry.entryNumber} deleted successfully!`, "success");
+      }).catch(err => {
+        showNotification(`Error deleting entry: ${err.message}`, "error");
+      });
     }
   }
 
@@ -617,17 +646,29 @@ function Array() {
   }
 
   function saveEditWithWarningAcknowledged() {
-    const updatedEntries = [...entries];
-    updatedEntries[editingIndex] = {
+    const updatedEntry = {
       ...editData,
       updatedAt: new Date().toLocaleString()
     };
-    setEntries(updatedEntries);
-    setEditingIndex(null);
-    setEditErrors({});
-    setEditEntryNumberEditable(false);
-    setWarnings({ show: false, type: null, message: "", action: null });
-    showNotification(`Entry #${editData.entryNumber} updated successfully!`, "success");
+
+    // Update in Firestore
+    updateDoc(doc(db, "entries", editData.id), {
+      entryNumber: updatedEntry.entryNumber,
+      modelName: updatedEntry.modelName,
+      serialNumber: updatedEntry.serialNumber,
+      propertyNumber: updatedEntry.propertyNumber,
+      conditionStatus: updatedEntry.conditionStatus,
+      remarks: updatedEntry.remarks,
+      updatedAt: updatedEntry.updatedAt
+    }).then(() => {
+      setEditingIndex(null);
+      setEditErrors({});
+      setEditEntryNumberEditable(false);
+      setWarnings({ show: false, type: null, message: "", action: null });
+      showNotification(`Entry #${updatedEntry.entryNumber} updated successfully!`, "success");
+    }).catch(err => {
+      showNotification(`Error updating entry: ${err.message}`, "error");
+    });
   }
 
   function handleCancelEdit() {
@@ -1221,8 +1262,22 @@ function Array() {
         try {
           const imported = JSON.parse(event.target.result);
           if (Array.isArray(imported)) {
-            setEntries(imported);
-            alert(`Successfully imported ${imported.length} entries`);
+            // Add each entry to Firestore
+            imported.forEach(entry => {
+              addDoc(collection(db, "entries"), {
+                entryNumber: entry.entryNumber,
+                modelName: entry.modelName,
+                serialNumber: entry.serialNumber,
+                propertyNumber: entry.propertyNumber,
+                conditionStatus: entry.conditionStatus,
+                remarks: entry.remarks,
+                createdAt: entry.createdAt,
+                updatedAt: entry.updatedAt
+              }).catch(err => {
+                console.error("Error importing entry:", err);
+              });
+            });
+            showNotification(`Successfully imported ${imported.length} entries`, "success");
           } else {
             alert("Invalid file format");
           }
@@ -1250,8 +1305,15 @@ function Array() {
       return;
     }
     if (confirm(`Delete ${selectedEntries.length} entries?`)) {
-      setEntries(entries.filter(e => !selectedEntries.includes(e.id)));
       const deletedCount = selectedEntries.length;
+      
+      // Delete each selected entry from Firestore
+      selectedEntries.forEach(entryId => {
+        deleteDoc(doc(db, "entries", entryId)).catch(err => {
+          console.error("Error deleting entry:", err);
+        });
+      });
+      
       setSelectedEntries([]);
       setBulkDeleteMode(false);
       showNotification(`${deletedCount} entries deleted successfully!`, "success");
@@ -1292,7 +1354,12 @@ function Array() {
 
   function clearAllEntries() {
     if (confirm("Clear all entries? This cannot be undone.")) {
-      setEntries([]);
+      // Delete all entries from Firestore
+      entries.forEach(entry => {
+        deleteDoc(doc(db, "entries", entry.id)).catch(err => {
+          console.error("Error deleting entry:", err);
+        });
+      });
       setSelectedEntries([]);
       setBulkDeleteMode(false);
     }
