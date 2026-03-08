@@ -1203,6 +1203,22 @@ li {
   transform: translateY(-1px);
 }
 
+.date-filter-display {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0B2D72;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(11, 45, 114, 0.06);
+  white-space: nowrap;
+  animation: fadeInUp 0.3s ease-out;
+}
+
+.date-filter-display strong {
+  color: #0B2D72;
+  font-weight: 700;
+}
+
 /* Button Toolbar */
 .button-toolbar {
   display: grid;

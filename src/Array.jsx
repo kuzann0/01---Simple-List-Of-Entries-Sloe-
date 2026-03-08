@@ -1602,13 +1602,18 @@ function Array() {
           }}
         />
         {dateFilter && (
-          <button
+          <>
+            <span className="date-filter-display">
+              📅 Active: <strong>{dateFilter}</strong>
+            </span>
+            <button
             className="clear-date-btn"
             onClick={() => setDateFilter("")}
             title="Clear date filter"
           >
             ✕
           </button>
+          </>
         )}
       </div>
       
