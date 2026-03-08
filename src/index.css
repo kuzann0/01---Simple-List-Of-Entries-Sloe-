@@ -294,7 +294,7 @@ li {
   background-color: #fff;
   color: #2c2c2c;
   min-width: 220px;
-  z-index: 1001;
+  z-index: 99999;
   border: 1.5px solid #e8e8e8;
   border-top: none;
   border-radius: 0 0 12px 12px;
@@ -388,7 +388,7 @@ li {
   background-color: #fff;
   color: #222;
   width: 100%;
-  z-index: 1001;
+  z-index: 99999;
   border: 1px solid #ddd;
   border-top: none;
 }
@@ -422,7 +422,7 @@ li {
   border-radius: 0 0 12px 12px;
   max-height: 380px;
   overflow-y: auto;
-  z-index: 1000;
+  z-index: 99999;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   animation: slideInDown 0.3s ease-out;
 }

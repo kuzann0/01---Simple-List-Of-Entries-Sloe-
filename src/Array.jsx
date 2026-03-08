@@ -1523,15 +1523,15 @@ function Array() {
         </div>
         <div className="stat-box serviceable">
           <div className="stat-number">{stats.serviceable}</div>
-          <div className="stat-label">Serviceable (SVC)</div>
+          <div className="stat-label">Serviceable</div>
         </div>
         <div className="stat-box unserviceable">
           <div className="stat-number">{stats.unserviceable}</div>
-          <div className="stat-label">Unserviceable (UNSVC)</div>
+          <div className="stat-label">Unserviceable</div>
         </div>
         <div className="stat-box">
           <div className="stat-number">{stats.updateMasterlist}</div>
-          <div className="stat-label">Update (Masterlist)</div>
+          <div className="stat-label">Update</div>
         </div>
       </div>
       
