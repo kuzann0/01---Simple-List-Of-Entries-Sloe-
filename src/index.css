@@ -662,7 +662,7 @@ li {
   right: 0;
   background-color: #fff;
   color: #222;
-  z-index: 1001;
+  z-index: 99999;
   border: 1px solid #ddd;
   border-top: none;
   max-height: 200px;
@@ -699,7 +699,7 @@ li {
   right: 0;
   background-color: #fff;
   color: #2c2c2c;
-  z-index: 1001;
+  z-index: 99999;
   border: 1px solid #d8dce6;
   border-top: none;
   border-radius: 0 0 8px 8px;
@@ -3298,7 +3298,7 @@ li {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 99999;
   padding: 2rem;
 }
 

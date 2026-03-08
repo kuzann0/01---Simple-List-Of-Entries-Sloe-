@@ -2304,20 +2304,32 @@ function Array() {
       )}
 
       {fullPageViewMode && (
-        <div className="fullpage-overlay">
-          <div className="fullpage-modal">
-            {/* Header with Title and Close Button */}
-            <div className="fullpage-title-bar">
-              <h2>Full Page View - Entries ({currentPage} of {getTotalPages()})</h2>
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: '#f8fafb', zIndex: 99999, overflow: 'auto' }}>
+          <div style={{ maxWidth: '100%', margin: '0 auto', padding: '20px' }}>
+            {/* Back Button */}
+            <div style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
               <button 
                 onClick={() => { setFullPageViewMode(false); setCurrentPage(1); }}
-                className="fullpage-close-btn"
-                title="Close full page view"
+                className="back-button"
+                title="Back to main view"
+                style={{
+                  padding: '8px 16px',
+                  background: 'linear-gradient(135deg, #0B2D72 0%, #061e48 100%)',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  transition: 'all 0.3s ease'
+                }}
               >
-                ✕
+                ← Back
               </button>
+              <h2 style={{ margin: 0, flex: 1 }}>Full Page View - Entries ({currentPage} of {getTotalPages()})</h2>
             </div>
 
+            {/* Header with Search and Filters */}
             <div className="fullpage-header">
               {/* Search Bar */}
               <div className="search-container fullpage-search-container">
@@ -2399,134 +2411,142 @@ function Array() {
                 )}
               </div>
 
-              {/* Status Filters and Date Filter Row */}
-              <div className="fullpage-filters-row">
-                {/* Status Filter Buttons */}
-                <div className="status-filter-buttons fullpage-status-filters">
-                  <button 
-                    className={`filter-btn ${statusFilter === "all" ? "active" : ""}`}
-                    onClick={() => { setStatusFilter("all"); setCurrentPage(1); }}
-                  >
-                    All ({entries.length})
-                  </button>
-                  <button 
-                    className={`filter-btn serviceable ${statusFilter === "Serviceable (SVC)" ? "active" : ""}`}
-                    onClick={() => { setStatusFilter("Serviceable (SVC)"); setCurrentPage(1); }}
-                  >
-                    SVC ({entries.filter(e => e.conditionStatus === "Serviceable (SVC)").length})
-                  </button>
-                  <button 
-                    className={`filter-btn unserviceable ${statusFilter === "Unserviceable (UNSVC)" ? "active" : ""}`}
-                    onClick={() => { setStatusFilter("Unserviceable (UNSVC)"); setCurrentPage(1); }}
-                  >
-                    UNSVC ({entries.filter(e => e.conditionStatus === "Unserviceable (UNSVC)").length})
-                  </button>
-                  <button 
-                    className={`filter-btn ${statusFilter === "Update (Masterlist)" ? "active" : ""}`}
-                    onClick={() => { setStatusFilter("Update (Masterlist)"); setCurrentPage(1); }}
-                  >
-                    Update ({entries.filter(e => e.conditionStatus === "Update (Masterlist)").length})
-                  </button>
-                </div>
-
+              {/* Date Filter and Status Filters */}
+              <div style={{ marginTop: '15px', display: 'flex', gap: '15px', flexWrap: 'wrap', alignItems: 'center' }}>
                 {/* Date Filter */}
-                <div className="date-filter-container fullpage-date-filter-inline">
-                  <label htmlFor="dateFilterFullpage" className="date-filter-label">Created Date:</label>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <label style={{ fontSize: '13px', fontWeight: '500', color: '#555' }}>Created Date:</label>
                   <input
                     type="date"
-                    id="dateFilterFullpage"
-                    className="date-filter-input"
                     value={dateFilter}
                     onChange={(e) => {
-                      const selectedDate = e.target.value;
-                      if (selectedDate) {
-                        const [year, month, day] = selectedDate.split('-');
-                        const formattedDate = `${parseInt(month)}/${parseInt(day)}/${year}`;
-                        setDateFilter(formattedDate);
-                      } else {
-                        setDateFilter("");
-                      }
+                      setDateFilter(e.target.value);
                       setCurrentPage(1);
                     }}
+                    className="date-picker"
+                    style={{ padding: '6px 10px', borderRadius: '6px', border: '1px solid #ddd' }}
                   />
                   {dateFilter && (
-                    <>
-                      <span className="date-filter-display">
-                        📅 Active: <strong>{dateFilter}</strong>
-                      </span>
-                      <button
-                        className="clear-date-btn"
-                        onClick={() => { setDateFilter(""); setCurrentPage(1); }}
-                        title="Clear date filter"
-                      >
-                        ✕
-                      </button>
-                    </>
+                    <button 
+                      onClick={() => setDateFilter("")}
+                      style={{ padding: '4px 10px', background: '#e8e8e8', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}
+                    >
+                      Clear
+                    </button>
                   )}
+                </div>
+
+                {/* Status Filter Buttons */}
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  {[
+                    { label: "All", value: "all", count: entries.length },
+                    { label: "SVC", value: "Serviceable (SVC)", count: entries.filter(e => e.conditionStatus === "Serviceable (SVC)").length },
+                    { label: "UNSVC", value: "Unserviceable (UNSVC)", count: entries.filter(e => e.conditionStatus === "Unserviceable (UNSVC)").length },
+                    { label: "Update", value: "Update (Masterlist)", count: entries.filter(e => e.conditionStatus === "Update (Masterlist)").length }
+                  ].map(status => (
+                    <button
+                      key={status.value}
+                      onClick={() => {
+                        setStatusFilter(status.value);
+                        setCurrentPage(1);
+                      }}
+                      style={{
+                        padding: '6px 12px',
+                        background: statusFilter === status.value ? 'linear-gradient(135deg, #0B2D72 0%, #061e48 100%)' : '#f0f0f0',
+                        color: statusFilter === status.value ? '#fff' : '#555',
+                        border: 'none',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontSize: '12px',
+                        fontWeight: '500',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      {status.label} ({status.count})
+                    </button>
+                  ))}
                 </div>
               </div>
             </div>
 
-            {/* Table Content */}
-            <div className="fullpage-content">
-              {getPaginatedEntries().length === 0 ? (
-                <div className="empty-state">No entries to display</div>
-              ) : (
-                <div className="table-responsive">
-                  <table className="entries-table">
-                    <thead>
-                      <tr>
-                        <th>Entry No.</th>
-                        <th>Model Name</th>
-                        <th>Serial No.</th>
-                        <th>Property No.</th>
-                        <th>Service Status</th>
-                        <th>Remarks</th>
-                        <th>Created</th>
-                        <th>Updated</th>
-                        <th>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {getPaginatedEntries().map((entry) => {
-                        const originalIndex = entries.indexOf(entry);
-                        return (
-                          <tr key={originalIndex} className={`fullpage-entry-row ${entry.conditionStatus === "Serviceable (SVC)" ? "status-serviceable" : entry.conditionStatus === "Unserviceable (UNSVC)" ? "status-unserviceable" : "status-update"}`}>
-                            <td className="entry-number">{entry.entryNumber}</td>
-                            <td className="model-name">{entry.modelName}</td>
-                            <td className="serial-number">{entry.serialNumber}</td>
-                            <td className="property-number">{entry.propertyNumber}</td>
-                            <td className="status-cell"><span className={`status-badge ${entry.conditionStatus === "Serviceable (SVC)" ? "serviceable" : entry.conditionStatus === "Unserviceable (UNSVC)" ? "unserviceable" : "update"}`}>{entry.conditionStatus}</span></td>
-                            <td className="remarks-cell">{entry.remarks}</td>
-                            <td className="date-cell">{entry.createdAt || "N/A"}</td>
-                            <td className="date-cell">{entry.updatedAt || "N/A"}</td>
-                            <td className="actions-cell">
-                              <button onClick={() => handleEditEntry(originalIndex)} className="edit-btn">Edit</button>
-                              <button onClick={() => handleRemoveEntry(originalIndex)} className="remove-btn">Remove</button>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
+            {/* Table */}
+            <div style={{ marginTop: '20px', overflowX: 'auto', borderRadius: '8px', border: '1px solid #e8e8e8', background: '#fff' }}>
+              {getFilteredEntries().length === 0 ? (
+                <div style={{ padding: '40px', textAlign: 'center', color: '#999' }}>
+                  <p>No entries found</p>
                 </div>
+              ) : (
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr style={{ background: '#f5f5f5', borderBottom: '2px solid #e8e8e8' }}>
+                      <th style={{ padding: '12px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#555' }}>Entry No.</th>
+                      <th style={{ padding: '12px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#555' }}>Model Name</th>
+                      <th style={{ padding: '12px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#555' }}>Serial No.</th>
+                      <th style={{ padding: '12px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#555' }}>Property No.</th>
+                      <th style={{ padding: '12px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#555' }}>Status</th>
+                      <th style={{ padding: '12px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#555' }}>Remarks</th>
+                      <th style={{ padding: '12px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#555' }}>Created</th>
+                      <th style={{ padding: '12px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#555' }}>Updated</th>
+                      <th style={{ padding: '12px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#555' }}>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {getPaginatedEntries().map((entry) => {
+                      const originalIndex = entries.findIndex(e => e.id === entry.id);
+                      return (
+                        <tr key={entry.id} style={{ borderBottom: '1px solid #f0f0f0', transition: 'all 0.2s ease' }}>
+                          <td style={{ padding: '12px', fontSize: '13px' }}>{entry.entryNumber}</td>
+                          <td style={{ padding: '12px', fontSize: '13px' }}>{entry.modelName}</td>
+                          <td style={{ padding: '12px', fontSize: '13px' }}>{entry.serialNumber}</td>
+                          <td style={{ padding: '12px', fontSize: '13px' }}>{entry.propertyNumber}</td>
+                          <td style={{ padding: '12px', fontSize: '13px' }}><span style={{ display: 'inline-block', padding: '4px 8px', borderRadius: '4px', background: entry.conditionStatus === "Serviceable (SVC)" ? '#d4edda' : entry.conditionStatus === "Unserviceable (UNSVC)" ? '#f8d7da' : '#fff3cd', color: entry.conditionStatus === "Serviceable (SVC)" ? '#155724' : entry.conditionStatus === "Unserviceable (UNSVC)" ? '#721c24' : '#856404', fontSize: '11px', fontWeight: '500' }}>{entry.conditionStatus}</span></td>
+                          <td style={{ padding: '12px', fontSize: '13px' }}>{entry.remarks}</td>
+                          <td style={{ padding: '12px', fontSize: '13px' }}>{entry.createdAt || "N/A"}</td>
+                          <td style={{ padding: '12px', fontSize: '13px' }}>{entry.updatedAt || "N/A"}</td>
+                          <td style={{ padding: '12px', fontSize: '13px' }}>
+                            <button onClick={() => handleEditEntry(originalIndex)} style={{ padding: '4px 8px', background: '#0066cc', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '11px', marginRight: '4px' }}>Edit</button>
+                            <button onClick={() => handleRemoveEntry(originalIndex)} style={{ padding: '4px 8px', background: '#dc3545', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '11px' }}>Remove</button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
               )}
             </div>
 
             {/* Pagination Controls at Bottom */}
-            <div className="fullpage-footer">
+            <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '20px' }}>
               <button 
                 onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                 disabled={currentPage === 1}
-                className="nav-btn"
+                style={{
+                  padding: '8px 16px',
+                  background: currentPage === 1 ? '#e8e8e8' : 'linear-gradient(135deg, #0B2D72 0%, #061e48 100%)',
+                  color: currentPage === 1 ? '#999' : '#fff',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: currentPage === 1 ? 'default' : 'pointer',
+                  fontSize: '13px',
+                  fontWeight: '500'
+                }}
               >
                 ← Previous
               </button>
-              <span className="page-indicator">Page {currentPage} of {getTotalPages()} | {getFilteredEntries().length} total</span>
+              <span style={{ fontSize: '13px', color: '#555', minWidth: '200px', textAlign: 'center' }}>Page {currentPage} of {getTotalPages()} | {getFilteredEntries().length} total</span>
               <button 
                 onClick={() => setCurrentPage(Math.min(getTotalPages(), currentPage + 1))}
                 disabled={currentPage === getTotalPages()}
-                className="nav-btn"
+                style={{
+                  padding: '8px 16px',
+                  background: currentPage === getTotalPages() ? '#e8e8e8' : 'linear-gradient(135deg, #0B2D72 0%, #061e48 100%)',
+                  color: currentPage === getTotalPages() ? '#999' : '#fff',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: currentPage === getTotalPages() ? 'default' : 'pointer',
+                  fontSize: '13px',
+                  fontWeight: '500'
+                }}
               >
                 Next →
               </button>
