@@ -234,7 +234,7 @@ li {
 .category-button {
   padding: 8px 14px;
   background: #fff;
-  border: none;
+  /* border: 1px solid #e5e5e5; */
   border-radius: 8px;
   cursor: pointer;
   display: flex;
@@ -259,7 +259,7 @@ li {
   background: #f5f5f5;
   box-shadow: 0 1px 3px rgba(11, 45, 114, 0.06);
   transform: none;
-  /* color: #0B2D72; */
+  color: #0B2D72;
 }
 
 .category-button:hover::before {
@@ -499,7 +499,7 @@ li {
 
 .download-pdf-btn:hover {
   background: #1a1a1a;
-  color: #fff;
+  color: #0B2D72;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   transform: translateY(-1px);
 }
@@ -1075,7 +1075,7 @@ li {
   padding: 10px 18px;
   background: #fff;
   color: #1d1d1d;
-  border: 1px solid #e5e5e5;
+  border: none;
   border-radius: 8px;
   cursor: pointer;
   font-size: 13px;
@@ -1131,6 +1131,76 @@ li {
 .filter-btn.unserviceable.active {
   background: #721c24;
   border-color: #721c24;
+}
+
+/* Date Filter */
+.date-filter-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 2.5rem;
+  padding: 1.2rem;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e5e5e5;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  flex-wrap: wrap;
+  animation: fadeInUp 0.6s ease-out 0.1s both;
+}
+
+.date-filter-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1d1d1d;
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+}
+
+.date-filter-input {
+  padding: 10px 14px;
+  border: none;
+  border-radius: 8px;
+  background: #fff;
+  color: #1d1d1d;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.date-filter-input:hover {
+  border-color: #0B2D72;
+  box-shadow: 0 2px 6px rgba(11, 45, 114, 0.08);
+}
+
+.date-filter-input:focus {
+  outline: none;
+  border-color: #0B2D72;
+  box-shadow: 0 0 0 3px rgba(11, 45, 114, 0.08);
+  background: #fafbfc;
+}
+
+.clear-date-btn {
+  padding: 8px 12px;
+  background: #fff;
+  border: none;
+  color: #dc2626;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.clear-date-btn:hover {
+  background: #dc2626;
+  color: #fff;
+  border-color: #dc2626;
+  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.12);
+  transform: translateY(-1px);
 }
 
 /* Button Toolbar */

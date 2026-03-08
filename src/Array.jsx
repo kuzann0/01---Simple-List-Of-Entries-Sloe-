@@ -55,6 +55,7 @@ function Array() {
   });
   const [selectedEntries, setSelectedEntries] = useState([]);
   const [statusFilter, setStatusFilter] = useState("all");
+  const [dateFilter, setDateFilter] = useState("");
   const [bulkDeleteMode, setBulkDeleteMode] = useState(false);
   const [addErrors, setAddErrors] = useState({});
   const [editErrors, setEditErrors] = useState({});
@@ -135,7 +136,7 @@ function Array() {
   useEffect(() => {
     // Reset main view page when filters change
     setMainViewPage(1);
-  }, [searchTerm, statusFilter]);
+  }, [searchTerm, statusFilter, dateFilter]);
 
   useEffect(() => {
     if (entries.length === 0) {
@@ -870,6 +871,15 @@ function Array() {
       result = result.filter(entry => entry.conditionStatus === statusFilter);
     }
     
+    // Apply date filter
+    if (dateFilter) {
+      result = result.filter(entry => {
+        // Extract date from createdAt (e.g., "3/8/2026, 3:45:30 PM" -> "3/8/2026")
+        const entryDate = entry.createdAt.split(",")[0];
+        return entryDate === dateFilter;
+      });
+    }
+    
     if (searchTerm.trim()) {
       const term = searchTerm.toLowerCase();
       
@@ -1569,6 +1579,37 @@ function Array() {
         >
           Update (Masterlist) ({stats.updateMasterlist})
         </button>
+      </div>
+
+      {/* Date Filter */}
+      <div className="date-filter-container">
+        <label htmlFor="dateFilter" className="date-filter-label">Created Date:</label>
+        <input
+          type="date"
+          id="dateFilter"
+          className="date-filter-input"
+          value={dateFilter}
+          onChange={(e) => {
+            const selectedDate = e.target.value;
+            if (selectedDate) {
+              // Convert date format from YYYY-MM-DD to M/D/YYYY to match createdAt format
+              const [year, month, day] = selectedDate.split('-');
+              const formattedDate = `${parseInt(month)}/${parseInt(day)}/${year}`;
+              setDateFilter(formattedDate);
+            } else {
+              setDateFilter("");
+            }
+          }}
+        />
+        {dateFilter && (
+          <button
+            className="clear-date-btn"
+            onClick={() => setDateFilter("")}
+            title="Clear date filter"
+          >
+            ✕
+          </button>
+        )}
       </div>
       
       <div className="button-toolbar">
