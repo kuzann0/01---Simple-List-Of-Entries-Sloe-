@@ -113,7 +113,6 @@
     [WIP]
 
 
-### Dark and Light  Mode Feature
+### Dark and Light  Mode Feature (User Preference)
 
-    - For user reference
-    
+    [WIP]
