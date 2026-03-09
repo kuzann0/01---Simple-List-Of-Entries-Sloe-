@@ -116,3 +116,25 @@
 ### Dark and Light  Mode Feature (User Preference)
 
     [WIP]
+
+
+### Search Bar Z-Index Bug
+
+    - possible solution: z-index: 99999; // sets the div on top of all layers
+
+
+### Data Entry (Per Batch)
+
+    - [ Batch No. + Date ] 
+
+
+    - Batch #0001 | March 09, 
+      2026
+
+    - Add new filter button for 
+      batch
+
+    - Wooden Stick Bundle 
+      Concept for more 
+      organized data handling.
+
