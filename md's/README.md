@@ -122,6 +122,8 @@
 
     - possible solution: z-index: 99999; // sets the div on top of all layers
 
+    - postion: absolute;
+
 
 ### Data Entry (Per Batch)
 
