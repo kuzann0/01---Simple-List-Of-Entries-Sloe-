@@ -86,10 +86,10 @@
     - Arrow keys work in both main view and full page view for pagination
     - Shortcuts are browser-compatible across all major browsers
 
-- When the Model Name is selected in category filtering, the output should be
-  'Name Of The Model + Serial Number'
+    - When the Model Name is selected in category filtering, the output should be
+    'Name Of The Model + Serial Number'
 
-- PDF Auto Filtering status; Serviceable, Unserviceable, For Update (Masterlist)
+    - PDF Auto Filtering status; Serviceable, Unserviceable, For Update (Masterlist)
 
 ### Add To Google Sheet Feature
 
@@ -97,7 +97,7 @@
 
 ### What it does:
 
-- Automatically creates new online spreadsheets in Google when the 'Add to Online Google Sheets' button is triggered.
+    - Automatically creates new online spreadsheets in Google when the 'Add to Online Google Sheets' button is triggered.
 
 ### Use Docker for DB Manager
 
@@ -105,24 +105,22 @@
 
 ### UI/UX Improvements
 
+    - 
     [WIP]
 
 
-### PDF Serviceable get((param)) bug
+
+
+### Toggle Dark Mode (User Preference)
+
+    - Explore available 
+      libraries/packages in 
+      ReactJS (Try New Concept)
 
     [WIP]
 
 
-### Dark and Light  Mode Feature (User Preference)
 
-    [WIP]
-
-
-### Search Bar Z-Index Bug
-
-    - possible solution: z-index: 99999; // sets the div on top of all layers
-
-    - postion: absolute;
 
 
 ### Data Entry (Per Batch)
@@ -139,4 +137,69 @@
     - Wooden Stick Bundle 
       Concept for more 
       organized data handling.
+
+
+
+### Within 30 Days data stored in archived will automatically removed permanently.
+
+    - Since we're using free    
+      version for the backend, 
+    we have to limit bandwidth and workloads of thewebsite.
+
+    - Add a button for archive  
+      feature.
+
+    - Once the 'archive' button is triggered, the user will be redirected into a new page.
+
+    - Add 'back to home' button
+
+
+
+###  Add To Google Sheets (n8n) feature (unfinished) 
+
+    - Already contains Client ID and other necessary credentials.
+
+    - Integrate to current tech stack: ReactJS (Frontend), Firebase (Backend) [ ... ]
+
+    [ WIP ]
+
+
+
+<br>
+<br>
+<br>
+<br>
+<hr>
+
+# ‍ ‍ ‍ ‍ ‍ ‍ ‍ ‍ ‍ ‍ ‍ ‍Bugs
+
+
+
+### After cancelling 
+
+### Search Bar Z-Index Bug
+
+    - possible solution: z-index: 99999; // sets the div on top of all layers
+
+    - postion: absolute;
+
+
+    
+### PDF Serviceable get((param)) bug
+
+    [WIP]
+
+
+### Date Filtering (Full-Page View)
+
+    - Date Picker; Check target 
+      date and {variable} 
+
+
+
+### Actions (Full-Page View)
+
+    - Add EventListener and     
+      simple {if-else} statement
+
 
